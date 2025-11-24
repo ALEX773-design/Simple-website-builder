@@ -1,0 +1,11 @@
+{
+  "theme": "light",
+  "autosave": true,
+  "defaultFont": "Inter",
+  "defaultFontSize": "16px",
+  "builderLayout": "expanded",
+  "snapToGrid": true,
+  "gridSize": 10,
+  "allowCustomCSS": true,
+  "showTipsOnStart": false
+}

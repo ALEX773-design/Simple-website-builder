@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Web App Builder</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="app">
+    <!-- Toolbar -->
+    <header class="toolbar">
+      <div class="logo">Builder</div>
+      <div class="toolbar-actions">
+        <button id="darkModeToggle" title="Toggle Dark Mode">🌙</button>
+        <button id="previewBtn" title="Preview">👁</button>
+        <button id="saveBtn" title="Save">💾</button>
+        <button id="exportBtn" title="Export">📤</button>
+        <button id="undoBtn" title="Undo">↩️</button>
+        <button id="redoBtn" title="Redo">↪️</button>
+        <button id="clearBtn" title="Clear">🧹</button>
+      </div>
+    </header>
+
+    <!-- Layout -->
+    <div class="layout">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <h3>Blocks</h3>
+        <button onclick="addBlock('text')">📝 Text</button>
+        <button onclick="addBlock('image')">🖼 Image</button>
+        <button onclick="addBlock('button')">🔘 Button</button>
+        <button onclick="addBlock('heading')">🔤 Heading</button>
+        <button onclick="addBlock('link')">🔗 Link</button>
+        <button onclick="addBlock('divider')">➖ Divider</button>
+        <button onclick="addBlock('input')">🔲 Input</button>
+        <button onclick="addBlock('card')">📇 Card</button>
+        <button onclick="addBlock('form')">📝 Form</button>
+      </aside>
+
+      <button class="toggle-btn" onclick="toggleLayout()" title="Expand/Collapse Workspace">&#8654;</button>
+
+      <!-- Main Area -->
+      <main class="builder-container">
+        <section id="builder" class="builder-area" contenteditable="true">
+          <p class="placeholder">Start building your app here...</p>
+        </section>
+
+        <section id="preview" class="preview-area hidden">
+          <!-- Live preview generated here -->
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- Block Settings Panel (now globally placed and hidden) -->
+  <div class="settings-panel hidden" id="blockSettingsPanel">
+    <label>
+      Text Color:
+      <input type="color" id="textColorInput" />
+    </label>
+
+    <label>
+      Background Color:
+      <input type="color" id="bgColorInput" />
+    </label>
+
+    <label>
+      Font Size (px):
+      <input type="number" id="fontSizeInput" min="8" max="72" />
+    </label>
+
+    <label>
+      Link (href):
+      <input type="text" id="hrefInput" placeholder="https://example.com" />
+    </label>
+
+    <button id="applySettingsBtn">Apply</button>
+  </div>
+
+  <!-- Export Modal -->
+  <div id="exportModal" class="modal hidden">
+    <div class="modal-content">
+      <h2>Export HTML</h2>
+      <textarea id="exportCode" readonly></textarea>
+      <button onclick="closeModal()">Close</button>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast hidden">Action completed successfully!</div>
+
+  <script src="script.js"></script>
+
+  <!-- Settings Panel -->
+  <div id="settingsPanel" class="hidden" style="position:fixed; bottom:20px; right:20px; background:#f0f0f0; padding:10px; border-radius:8px; box-shadow:0 0 10px rgba(0,0,0,0.2);">
+    <label>Text Color:
+      <input type="color" id="textColorPicker" onchange="applySettings()" />
+    </label>
+    <br />
+    <label>Font Size:
+      <input type="number" id="fontSizePicker" value="16" onchange="applySettings()" />
+    </label>
+  </div>
+</body>
+</html>
