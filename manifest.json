@@ -1,7 +1,6 @@
 {
   "name": "Web App Builder",
   "short_name": "AppBuilder",
-  "description": "Drag and drop builder for creating web apps.",
   "start_url": "./main.html",
   "display": "standalone",
   "background_color": "#ffffff",
