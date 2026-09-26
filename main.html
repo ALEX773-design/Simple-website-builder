@@ -8,7 +8,7 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 </head>
 <body>
   <div class="app">
@@ -40,7 +40,7 @@
       </div>
 
       <div class="toolbar-actions">
-        <button id="darkModeToggle">Theme Mode</button>
+        <button id="darkModeToggle">Dark UI</button>
         <button id="seoModalBtn">SEO Settings</button>
         <button id="customCssBtn">Global CSS</button>
         <button id="previewBtn">Preview</button>
@@ -86,16 +86,6 @@
       </aside>
 
       <main class="builder-container">
-        <div id="richTextBar" class="rich-text-bar hidden">
-          <button onclick="formatText('bold')">B</button>
-          <button onclick="formatText('italic')">I</button>
-          <button onclick="formatText('underline')">U</button>
-          <button onclick="formatText('justifyLeft')">Left</button>
-          <button onclick="formatText('justifyCenter')">Center</button>
-          <button onclick="formatText('justifyRight')">Right</button>
-          <button onclick="promptLink()">Link</button>
-        </div>
-
         <section id="builder" class="builder-area view-desktop theme-indigo">
           <p class="placeholder">Select an element from the sidebar to add it to your canvas.</p>
         </section>
@@ -119,13 +109,6 @@
     <label>Font Size (px):
       <input type="number" id="fontSizePicker" value="16" onchange="applySettings()" />
     </label>
-    <label>Font Family:
-      <select id="fontFamilyPicker" onchange="applySettings()">
-        <option value="Inter, sans-serif">Sans-Serif (Inter)</option>
-        <option value="Lora, serif">Serif (Lora)</option>
-        <option value="Roboto Mono, monospace">Monospace</option>
-      </select>
-    </label>
     <label>Text Alignment:
       <select id="alignmentPicker" onchange="applySettings()">
         <option value="left">Left</option>
@@ -135,9 +118,6 @@
     </label>
     <label>Padding (px):
       <input type="number" id="paddingPicker" value="0" onchange="applySettings()" />
-    </label>
-    <label>Border Radius (px):
-      <input type="number" id="borderRadiusPicker" value="0" onchange="applySettings()" />
     </label>
     <div id="linkSettingsGroup" class="hidden">
       <label>Link URL:
@@ -187,7 +167,6 @@
   <div id="cssModal" class="modal hidden">
     <div class="modal-content">
       <h2>Global Custom CSS</h2>
-      <p>CSS rules added here will be embedded in exported HTML files:</p>
       <textarea id="customCssInput" placeholder="body { background-color: #ffffff; }"></textarea>
       <div class="modal-actions">
         <button onclick="saveCustomCss()">Apply CSS</button>
