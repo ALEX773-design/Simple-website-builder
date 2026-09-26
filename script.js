@@ -6,15 +6,12 @@ const cssModal = document.getElementById('cssModal');
 const exportCode = document.getElementById('exportCode');
 const customCssInput = document.getElementById('customCssInput');
 const settingsPanel = document.getElementById('settingsPanel');
-const richTextBar = document.getElementById('richTextBar');
 
 const textColorPicker = document.getElementById('textColorPicker');
 const bgColorPicker = document.getElementById('bgColorPicker');
 const fontSizePicker = document.getElementById('fontSizePicker');
-const fontFamilyPicker = document.getElementById('fontFamilyPicker');
 const alignmentPicker = document.getElementById('alignmentPicker');
 const paddingPicker = document.getElementById('paddingPicker');
-const borderRadiusPicker = document.getElementById('borderRadiusPicker');
 const linkSettingsGroup = document.getElementById('linkSettingsGroup');
 const linkUrlInput = document.getElementById('linkUrlInput');
 const linkTargetInput = document.getElementById('linkTargetInput');
@@ -298,28 +295,6 @@ function getDragAfterElement(container, y) {
   }, { offset: Number.NEGATIVE_INFINITY }).element;
 }
 
-document.addEventListener('selectionchange', () => {
-  const selection = window.getSelection();
-  if (selection.toString().trim().length > 0 && builder.contains(selection.anchorNode)) {
-    const range = selection.getRangeAt(0);
-    const rect = range.getBoundingClientRect();
-    richTextBar.style.top = `${rect.top - 45 + window.scrollY}px`;
-    richTextBar.style.left = `${rect.left + window.scrollX}px`;
-    richTextBar.classList.remove('hidden');
-  } else {
-    richTextBar.classList.add('hidden');
-  }
-});
-
-function formatText(command) {
-  document.execCommand(command, false, null);
-}
-
-function promptLink() {
-  const url = prompt('Enter link URL:', 'https://');
-  if (url) document.execCommand('createLink', false, url);
-}
-
 builder.addEventListener('click', e => {
   const block = e.target.closest('.block');
   if (!block || e.target.closest('.block-controls')) return;
@@ -347,10 +322,8 @@ builder.addEventListener('click', e => {
   textColorPicker.value = rgbToHex(computed.color || '#000000');
   bgColorPicker.value = rgbToHex(computed.backgroundColor || '#ffffff');
   fontSizePicker.value = parseInt(computed.fontSize, 10) || 16;
-  fontFamilyPicker.value = computed.fontFamily.includes('serif') ? 'Lora, serif' : (computed.fontFamily.includes('monospace') ? 'Roboto Mono, monospace' : 'Inter, sans-serif');
   alignmentPicker.value = computed.textAlign || 'left';
   paddingPicker.value = parseInt(computed.padding, 10) || 0;
-  borderRadiusPicker.value = parseInt(computed.borderRadius, 10) || 0;
 });
 
 function applySettings() {
@@ -359,10 +332,8 @@ function applySettings() {
   selectedBlock.style.color = textColorPicker.value;
   selectedBlock.style.backgroundColor = bgColorPicker.value;
   selectedBlock.style.fontSize = fontSizePicker.value + 'px';
-  selectedBlock.style.fontFamily = fontFamilyPicker.value;
   selectedBlock.style.textAlign = alignmentPicker.value;
   selectedBlock.style.padding = paddingPicker.value + 'px';
-  selectedBlock.style.borderRadius = borderRadiusPicker.value + 'px';
 
   if (selectedBlock.tagName === 'A') {
     selectedBlock.setAttribute('href', linkUrlInput.value);
@@ -390,8 +361,9 @@ function setCanvasView(view, btn) {
   document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
 
-  builder.className = `builder-area view-${view} ${getThemeClass()}`;
-  preview.className = `preview-area hidden view-${view} ${getThemeClass()}`;
+  const currentTheme = getThemeClass();
+  builder.className = `builder-area view-${view} ${currentTheme}`;
+  preview.className = `preview-area hidden view-${view} ${currentTheme}`;
 }
 
 function applyGlobalTheme(theme) {
@@ -500,7 +472,7 @@ function downloadHTMLFile() {
   <meta property="og:image" content="${seoData.image}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
