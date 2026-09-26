@@ -3,210 +3,69 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Web App Builder Ultra</title>
+  <title>Web App Builder Workspace</title>
   <link rel="stylesheet" href="style.css" />
-  <link rel="manifest" href="manifest.json" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet" />
 </head>
 <body>
   <div class="app">
-    <!-- Top Toolbar -->
     <header class="toolbar">
-      <div class="brand">
-        <span class="logo">Builder Ultra</span>
-        <span id="saveStatus" class="save-status">Auto-saved</span>
-      </div>
+      <div class="logo">Builder</div>
       
       <div class="toolbar-center">
-        <select id="templateSelect" onchange="loadTemplate(this.value)">
-          <option value="" disabled selected>Templates</option>
-          <option value="saas">SaaS Landing Page</option>
-          <option value="portfolio">Personal Portfolio</option>
-          <option value="blank">Blank Canvas</option>
-        </select>
-
-        <select id="themeSelect" onchange="applyGlobalTheme(this.value)">
+        <select id="themeSelect" onchange="applyTheme(this.value)">
           <option value="indigo">Theme: Indigo</option>
           <option value="emerald">Theme: Emerald</option>
-          <option value="sunset">Theme: Sunset</option>
-          <option value="dark">Theme: Midnight</option>
+          <option value="dark">Theme: Dark</option>
         </select>
-
-        <div class="view-modes">
-          <button onclick="setCanvasView('desktop', this)" class="view-btn active">Desktop</button>
-          <button onclick="setCanvasView('tablet', this)" class="view-btn">Tablet</button>
-          <button onclick="setCanvasView('mobile', this)" class="view-btn">Mobile</button>
-        </div>
       </div>
 
       <div class="toolbar-actions">
-        <button id="darkModeToggle">Theme Mode</button>
-        <button id="seoModalBtn">SEO Settings</button>
-        <button id="customCssBtn">Global CSS</button>
         <button id="previewBtn">Preview</button>
-        <button id="exportJsonBtn">Save Project</button>
-        <button id="importJsonBtn">Load Project</button>
-        <button id="downloadBtn" class="primary-btn">Export HTML</button>
+        <button id="saveBtn">Save</button>
+        <button id="downloadBtn" class="primary-btn">Download HTML</button>
         <button id="exportBtn">View Code</button>
-        <button id="undoBtn">↩</button>
-        <button id="redoBtn">↪</button>
         <button id="clearBtn" class="danger-btn">Clear</button>
       </div>
     </header>
 
-    <!-- App Layout -->
     <div class="layout">
-      <!-- Sidebar -->
       <aside class="sidebar">
-        <h3>Add Components</h3>
-        <input type="text" id="blockSearch" placeholder="Search components..." onkeyup="filterBlocks()" />
-        
-        <div class="block-list" id="blockList">
-          <div class="category-label">Basics</div>
-          <button class="block-item" onclick="addBlock('heading')"><span class="label">Heading</span></button>
-          <button class="block-item" onclick="addBlock('text')"><span class="label">Text Paragraph</span></button>
-          <button class="block-item" onclick="addBlock('image')"><span class="label">Image</span></button>
-          <button class="block-item" onclick="addBlock('button')"><span class="label">Button</span></button>
-          <button class="block-item" onclick="addBlock('badge')"><span class="label">Badge / Pill</span></button>
-          <button class="block-item" onclick="addBlock('divider')"><span class="label">Divider Line</span></button>
-
-          <div class="category-label">Sections & Layouts</div>
-          <button class="block-item" onclick="addBlock('hero')"><span class="label">Hero Banner</span></button>
-          <button class="block-item" onclick="addBlock('features')"><span class="label">Feature Grid (3-Col)</span></button>
-          <button class="block-item" onclick="addBlock('pricing')"><span class="label">Pricing Table</span></button>
-          <button class="block-item" onclick="addBlock('faq')"><span class="label">FAQ Accordion</span></button>
-          <button class="block-item" onclick="addBlock('testimonial')"><span class="label">Testimonial Card</span></button>
-          <button class="block-item" onclick="addBlock('columns')"><span class="label">2-Column Container</span></button>
-          <button class="block-item" onclick="addBlock('footer')"><span class="label">Footer Bar</span></button>
-
-          <div class="category-label">Forms & Media</div>
-          <button class="block-item" onclick="addBlock('form')"><span class="label">Contact Form</span></button>
-          <button class="block-item" onclick="addBlock('input')"><span class="label">Input Field</span></button>
-          <button class="block-item" onclick="addBlock('video')"><span class="label">Video Embed</span></button>
-          <button class="block-item" onclick="addBlock('html')"><span class="label">Custom HTML Code</span></button>
-        </div>
+        <h3>Add Elements</h3>
+        <button onclick="addBlock('heading')">Heading</button>
+        <button onclick="addBlock('text')">Text Paragraph</button>
+        <button onclick="addBlock('image')">Image</button>
+        <button onclick="addBlock('button')">Button</button>
+        <button onclick="addBlock('card')">Card Container</button>
+        <button onclick="addBlock('divider')">Divider Line</button>
       </aside>
 
-      <button class="toggle-btn" onclick="toggleLayout()" title="Toggle Sidebar">&gt;</button>
-
-      <!-- Main Canvas -->
       <main class="builder-container">
-        <!-- Floating Inline Rich Text Formatting Bar -->
-        <div id="richTextBar" class="rich-text-bar hidden">
-          <button onclick="formatText('bold')"><b>B</b></button>
-          <button onclick="formatText('italic')"><i>I</i></button>
-          <button onclick="formatText('underline')"><u>U</u></button>
-          <button onclick="formatText('justifyLeft')">←</button>
-          <button onclick="formatText('justifyCenter')">↔</button>
-          <button onclick="formatText('justifyRight')">→</button>
-          <button onclick="promptLink()">🔗</button>
-        </div>
-
-        <section id="builder" class="builder-area view-desktop theme-indigo">
-          <p class="placeholder">Select a block from the sidebar or choose a template from the toolbar to start.</p>
+        <section id="builder" class="builder-area theme-indigo">
+          <p class="placeholder">Select an element from the left sidebar to add it to your canvas.</p>
         </section>
 
-        <section id="preview" class="preview-area hidden view-desktop theme-indigo"></section>
+        <section id="preview" class="preview-area hidden theme-indigo"></section>
       </main>
     </div>
   </div>
 
-  <!-- Sidebar Style Editor -->
   <div id="settingsPanel" class="settings-panel hidden">
-    <div class="panel-header">
-      <h4>Style Inspector</h4>
-      <button onclick="closeSettingsPanel()" class="close-panel-btn">×</button>
-    </div>
+    <h4>Inspector</h4>
     <label>Text Color:
       <input type="color" id="textColorPicker" onchange="applySettings()" />
-    </label>
-    <label>Background Color:
-      <input type="color" id="bgColorPicker" onchange="applySettings()" />
     </label>
     <label>Font Size (px):
       <input type="number" id="fontSizePicker" value="16" onchange="applySettings()" />
     </label>
-    <label>Font Family:
-      <select id="fontFamilyPicker" onchange="applySettings()">
-        <option value="Inter, sans-serif">Sans-Serif (Inter)</option>
-        <option value="Lora, serif">Serif (Lora)</option>
-        <option value="Roboto Mono, monospace">Monospace</option>
-      </select>
-    </label>
-    <label>Text Alignment:
-      <select id="alignmentPicker" onchange="applySettings()">
-        <option value="left">Left</option>
-        <option value="center">Center</option>
-        <option value="right">Right</option>
-      </select>
-    </label>
-    <label>Padding (px):
-      <input type="number" id="paddingPicker" value="0" onchange="applySettings()" />
-    </label>
-    <label>Border Radius (px):
-      <input type="number" id="borderRadiusPicker" value="0" onchange="applySettings()" />
-    </label>
-    <div id="linkSettingsGroup" class="hidden">
-      <label>Link URL (href):
-        <input type="text" id="linkUrlInput" placeholder="https://example.com" onchange="applySettings()" />
-      </label>
-      <label class="checkbox-label">
-        <input type="checkbox" id="linkTargetInput" onchange="applySettings()" />
-        Open link in new tab
-      </label>
-    </div>
-    <div id="imageUploadGroup" class="hidden">
-      <label>Replace Image File:
-        <input type="file" id="imageFileInput" accept="image/*" onchange="handleImageUpload(event)" />
-      </label>
-    </div>
   </div>
 
-  <!-- Modals -->
   <div id="exportModal" class="modal hidden">
     <div class="modal-content">
       <h2>Export Source Code</h2>
       <textarea id="exportCode" readonly></textarea>
-      <div class="modal-actions">
-        <button onclick="closeModal('exportModal')">Close</button>
-      </div>
+      <button onclick="closeModal()">Close</button>
     </div>
   </div>
-
-  <div id="seoModal" class="modal hidden">
-    <div class="modal-content">
-      <h2>SEO & Page Metadata</h2>
-      <label>Page Title:
-        <input type="text" id="seoTitle" placeholder="My Awesome Website" />
-      </label>
-      <label>Meta Description:
-        <textarea id="seoDescription" placeholder="Brief summary for search engines..."></textarea>
-      </label>
-      <label>OpenGraph Image URL:
-        <input type="text" id="seoImage" placeholder="https://example.com/og-image.jpg" />
-      </label>
-      <div class="modal-actions">
-        <button onclick="saveSeoData()">Save SEO Settings</button>
-        <button onclick="closeModal('seoModal')" class="secondary-btn">Cancel</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="cssModal" class="modal hidden">
-    <div class="modal-content">
-      <h2>Global Custom CSS</h2>
-      <p>Custom CSS rules added here will be embedded into exported pages:</p>
-      <textarea id="customCssInput" placeholder="body { background-color: #ffffff; }"></textarea>
-      <div class="modal-actions">
-        <button onclick="saveCustomCss()">Apply CSS</button>
-        <button onclick="closeModal('cssModal')" class="secondary-btn">Cancel</button>
-      </div>
-    </div>
-  </div>
-
-  <input type="file" id="jsonFileInput" accept=".json" style="display:none;" onchange="importJsonFile(event)" />
 
   <script src="script.js"></script>
 </body>
