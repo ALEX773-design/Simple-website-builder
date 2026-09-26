@@ -1,52 +1,323 @@
 const builder = document.getElementById('builder');
 const preview = document.getElementById('preview');
 const exportModal = document.getElementById('exportModal');
+const seoModal = document.getElementById('seoModal');
+const cssModal = document.getElementById('cssModal');
 const exportCode = document.getElementById('exportCode');
+const customCssInput = document.getElementById('customCssInput');
 const settingsPanel = document.getElementById('settingsPanel');
+const richTextBar = document.getElementById('richTextBar');
+
 const textColorPicker = document.getElementById('textColorPicker');
+const bgColorPicker = document.getElementById('bgColorPicker');
 const fontSizePicker = document.getElementById('fontSizePicker');
+const fontFamilyPicker = document.getElementById('fontFamilyPicker');
+const alignmentPicker = document.getElementById('alignmentPicker');
+const paddingPicker = document.getElementById('paddingPicker');
+const borderRadiusPicker = document.getElementById('borderRadiusPicker');
+const linkSettingsGroup = document.getElementById('linkSettingsGroup');
+const linkUrlInput = document.getElementById('linkUrlInput');
+const linkTargetInput = document.getElementById('linkTargetInput');
+const imageUploadGroup = document.getElementById('imageUploadGroup');
 
 let selectedBlock = null;
+let undoStack = [];
+let redoStack = [];
+let globalCustomCss = "";
+let seoData = { title: "My Custom Website", description: "", image: "" };
+
+function saveState() {
+  undoStack.push(builder.innerHTML);
+  if (undoStack.length > 25) undoStack.shift();
+  redoStack = [];
+}
+
+function undo() {
+  if (undoStack.length > 0) {
+    redoStack.push(builder.innerHTML);
+    builder.innerHTML = undoStack.pop();
+    rebindEvents();
+  }
+}
+
+function redo() {
+  if (redoStack.length > 0) {
+    undoStack.push(builder.innerHTML);
+    builder.innerHTML = redoStack.pop();
+    rebindEvents();
+  }
+}
+
+function rebindEvents() {
+  const blocks = builder.querySelectorAll('.block');
+  blocks.forEach(block => attachBlockEvents(block));
+}
+
+function moveBlock(block, direction) {
+  saveState();
+  if (direction === 'up' && block.previousElementSibling && !block.previousElementSibling.classList.contains('placeholder')) {
+    builder.insertBefore(block, block.previousElementSibling);
+  } else if (direction === 'down' && block.nextElementSibling) {
+    builder.insertBefore(block.nextElementSibling, block);
+  }
+}
+
+function duplicateBlock(block) {
+  saveState();
+  const clone = block.cloneNode(true);
+  clone.id = `block-${Date.now()}`;
+  attachBlockEvents(clone);
+  block.after(clone);
+}
+
+function attachBlockEvents(block) {
+  block.addEventListener('dragstart', e => {
+    e.dataTransfer.setData('text/plain', block.id);
+    block.classList.add('dragging');
+  });
+
+  block.addEventListener('dragend', () => {
+    block.classList.remove('dragging');
+  });
+
+  const deleteBtn = block.querySelector('.delete-btn');
+  if (deleteBtn) {
+    deleteBtn.onclick = (e) => {
+      e.stopPropagation();
+      saveState();
+      block.remove();
+    };
+  }
+
+  const dupBtn = block.querySelector('.dup-btn');
+  if (dupBtn) {
+    dupBtn.onclick = (e) => {
+      e.stopPropagation();
+      duplicateBlock(block);
+    };
+  }
+
+  const upBtn = block.querySelector('.up-btn');
+  if (upBtn) {
+    upBtn.onclick = (e) => {
+      e.stopPropagation();
+      moveBlock(block, 'up');
+    };
+  }
+
+  const downBtn = block.querySelector('.down-btn');
+  if (downBtn) {
+    downBtn.onclick = (e) => {
+      e.stopPropagation();
+      moveBlock(block, 'down');
+    };
+  }
+}
+
+function createControls() {
+  const controls = document.createElement('div');
+  controls.className = 'block-controls';
+  controls.innerHTML = `
+    <button class="up-btn" title="Move Up">↑</button>
+    <button class="down-btn" title="Move Down">↓</button>
+    <button class="dup-btn" title="Duplicate">Clone</button>
+    <button class="delete-btn" title="Delete">×</button>
+  `;
+  return controls;
+}
 
 function addBlock(type) {
+  saveState();
   const placeholder = builder.querySelector('.placeholder');
   if (placeholder) placeholder.remove();
 
   const block = document.createElement('div');
-  block.className = 'block';
+  block.classList.add('block');
+  block.setAttribute('draggable', 'true');
+  block.id = `block-${Date.now()}`;
 
-  const controls = document.createElement('div');
-  controls.className = 'block-controls';
-  controls.innerHTML = '<button onclick="this.parentElement.parentElement.remove()">Delete</button>';
-  block.appendChild(controls);
+  block.appendChild(createControls());
 
   let content;
-  if (type === 'heading') {
-    content = document.createElement('h2');
-    content.contentEditable = 'true';
-    content.textContent = 'Sample Heading';
-  } else if (type === 'text') {
-    content = document.createElement('p');
-    content.contentEditable = 'true';
-    content.textContent = 'Sample paragraph text editable by clicking.';
-  } else if (type === 'image') {
-    content = document.createElement('img');
-    content.src = 'https://via.placeholder.com/600x200';
-    content.style.maxWidth = '100%';
-  } else if (type === 'button') {
-    content = document.createElement('button');
-    content.className = 'custom-btn';
-    content.textContent = 'Click Action';
-  } else if (type === 'card') {
-    content = document.createElement('div');
-    content.className = 'card-box';
-    content.innerHTML = '<h3 contenteditable="true">Card Title</h3><p contenteditable="true">Card description body text.</p>';
-  } else if (type === 'divider') {
-    content = document.createElement('hr');
+  switch (type) {
+    case 'heading':
+      content = document.createElement('h2');
+      content.contentEditable = 'true';
+      content.textContent = 'Editable Heading';
+      break;
+    case 'text':
+      content = document.createElement('p');
+      content.contentEditable = 'true';
+      content.textContent = 'Text paragraph for detailed explanation or content text.';
+      break;
+    case 'badge':
+      content = document.createElement('span');
+      content.className = 'badge-pill';
+      content.contentEditable = 'true';
+      content.textContent = 'NEW FEATURE';
+      break;
+    case 'image':
+      content = document.createElement('img');
+      content.src = 'https://via.placeholder.com/800x400';
+      content.alt = 'Graphic container';
+      content.style.width = '100%';
+      break;
+    case 'button':
+      content = document.createElement('button');
+      content.className = 'custom-action-btn';
+      content.textContent = 'Action Button';
+      break;
+    case 'hero':
+      content = document.createElement('div');
+      content.className = 'hero-section';
+      content.innerHTML = `
+        <span class="badge-pill" contenteditable="true">Version 2.0</span>
+        <h1 contenteditable="true">Build Faster Without Complexity</h1>
+        <p contenteditable="true">Create, customize, and publish beautiful layouts directly in your browser.</p>
+        <button class="custom-action-btn">Get Started</button>
+      `;
+      break;
+    case 'features':
+      content = document.createElement('div');
+      content.className = 'feature-grid';
+      content.innerHTML = `
+        <div class="feature-card"><h4 contenteditable="true">Fast Performance</h4><p contenteditable="true">Zero heavy frameworks, clean static HTML output.</p></div>
+        <div class="feature-card"><h4 contenteditable="true">Theme Engine</h4><p contenteditable="true">Instantly switch font and color styling across elements.</p></div>
+        <div class="feature-card"><h4 contenteditable="true">Fully Responsive</h4><p contenteditable="true">Layouts render cleanly on desktop, tablet, and phone.</p></div>
+      `;
+      break;
+    case 'pricing':
+      content = document.createElement('div');
+      content.className = 'pricing-grid';
+      content.innerHTML = `
+        <div class="pricing-card">
+          <h3 contenteditable="true">Starter</h3>
+          <div class="price" contenteditable="true">$0</div>
+          <p contenteditable="true">Basic features</p>
+          <button class="custom-action-btn">Select Plan</button>
+        </div>
+        <div class="pricing-card featured">
+          <h3 contenteditable="true">Pro</h3>
+          <div class="price" contenteditable="true">$19/mo</div>
+          <p contenteditable="true">Unlimited exports & tools</p>
+          <button class="custom-action-btn">Select Plan</button>
+        </div>
+      `;
+      break;
+    case 'faq':
+      content = document.createElement('div');
+      content.className = 'faq-container';
+      content.innerHTML = `
+        <details><summary contenteditable="true">Is this hosted on GitHub Pages?</summary><p contenteditable="true">Yes, exported files are clean static HTML and CSS.</p></details>
+        <details><summary contenteditable="true">Is a backend server required?</summary><p contenteditable="true">No server is needed. Everything executes inside the browser.</p></details>
+      `;
+      break;
+    case 'testimonial':
+      content = document.createElement('div');
+      content.className = 'testimonial-card';
+      content.innerHTML = `
+        <p contenteditable="true">"This builder made launching our project homepage simple and fast."</p>
+        <strong contenteditable="true">Product Creator</strong>
+      `;
+      break;
+    case 'columns':
+      content = document.createElement('div');
+      content.className = 'two-column-grid';
+      content.innerHTML = `
+        <div class="col" contenteditable="true">Left column content block.</div>
+        <div class="col" contenteditable="true">Right column content block.</div>
+      `;
+      break;
+    case 'footer':
+      content = document.createElement('footer');
+      content.className = 'site-footer';
+      content.innerHTML = `
+        <p contenteditable="true">© 2026 Web App Builder. All rights reserved.</p>
+      `;
+      break;
+    case 'video':
+      content = document.createElement('div');
+      content.className = 'video-container';
+      content.innerHTML = '<iframe width="100%" height="315" src="https://www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0" allowfullscreen></iframe>';
+      break;
+    case 'form':
+      content = document.createElement('form');
+      content.className = 'sample-form';
+      content.innerHTML = `
+        <input type="text" placeholder="Your Name" required />
+        <input type="email" placeholder="Your Email" required />
+        <textarea placeholder="Message details..."></textarea>
+        <button type="submit">Send Message</button>
+      `;
+      break;
+    case 'input':
+      content = document.createElement('input');
+      content.type = 'text';
+      content.placeholder = 'Sample form input box';
+      break;
+    case 'divider':
+      content = document.createElement('hr');
+      break;
+    case 'html':
+      content = document.createElement('div');
+      content.className = 'raw-html-block';
+      content.contentEditable = 'true';
+      content.textContent = '<div style="padding:15px; background:#e0f2fe; border-radius:6px;">Custom Raw HTML Block</div>';
+      break;
+    default:
+      return;
   }
 
   block.appendChild(content);
+  attachBlockEvents(block);
   builder.appendChild(block);
+}
+
+builder.addEventListener('dragover', e => {
+  e.preventDefault();
+  const dragging = document.querySelector('.dragging');
+  if (!dragging) return;
+  const after = getDragAfterElement(builder, e.clientY);
+  if (!after) {
+    builder.appendChild(dragging);
+  } else {
+    builder.insertBefore(dragging, after);
+  }
+});
+
+function getDragAfterElement(container, y) {
+  const blocks = [...container.querySelectorAll('.block:not(.dragging)')];
+  return blocks.reduce((closest, child) => {
+    const box = child.getBoundingClientRect();
+    const offset = y - box.top - box.height / 2;
+    if (offset < 0 && offset > closest.offset) {
+      return { offset, element: child };
+    } else {
+      return closest;
+    }
+  }, { offset: Number.NEGATIVE_INFINITY }).element;
+}
+
+document.addEventListener('selectionchange', () => {
+  const selection = window.getSelection();
+  if (selection.toString().trim().length > 0 && builder.contains(selection.anchorNode)) {
+    const range = selection.getRangeAt(0);
+    const rect = range.getBoundingClientRect();
+    richTextBar.style.top = `${rect.top - 45 + window.scrollY}px`;
+    richTextBar.style.left = `${rect.left + window.scrollX}px`;
+    richTextBar.classList.remove('hidden');
+  } else {
+    richTextBar.classList.add('hidden');
+  }
+});
+
+function formatText(command) {
+  document.execCommand(command, false, null);
+}
+
+function promptLink() {
+  const url = prompt('Enter link URL:', 'https://');
+  if (url) document.execCommand('createLink', false, url);
 }
 
 builder.addEventListener('click', e => {
@@ -57,29 +328,309 @@ builder.addEventListener('click', e => {
   if (!selectedBlock) return;
 
   settingsPanel.classList.remove('hidden');
+
+  if (selectedBlock.tagName === 'A') {
+    linkSettingsGroup.classList.remove('hidden');
+    linkUrlInput.value = selectedBlock.getAttribute('href') || '';
+    linkTargetInput.checked = selectedBlock.getAttribute('target') === '_blank';
+  } else {
+    linkSettingsGroup.classList.add('hidden');
+  }
+
+  if (selectedBlock.tagName === 'IMG') {
+    imageUploadGroup.classList.remove('hidden');
+  } else {
+    imageUploadGroup.classList.add('hidden');
+  }
+
   const computed = window.getComputedStyle(selectedBlock);
   textColorPicker.value = rgbToHex(computed.color || '#000000');
+  bgColorPicker.value = rgbToHex(computed.backgroundColor || '#ffffff');
   fontSizePicker.value = parseInt(computed.fontSize, 10) || 16;
+  fontFamilyPicker.value = computed.fontFamily.includes('serif') ? 'Lora, serif' : (computed.fontFamily.includes('monospace') ? 'Roboto Mono, monospace' : 'Inter, sans-serif');
+  alignmentPicker.value = computed.textAlign || 'left';
+  paddingPicker.value = parseInt(computed.padding, 10) || 0;
+  borderRadiusPicker.value = parseInt(computed.borderRadius, 10) || 0;
 });
 
 function applySettings() {
   if (!selectedBlock) return;
+  saveState();
   selectedBlock.style.color = textColorPicker.value;
+  selectedBlock.style.backgroundColor = bgColorPicker.value;
   selectedBlock.style.fontSize = fontSizePicker.value + 'px';
+  selectedBlock.style.fontFamily = fontFamilyPicker.value;
+  selectedBlock.style.textAlign = alignmentPicker.value;
+  selectedBlock.style.padding = paddingPicker.value + 'px';
+  selectedBlock.style.borderRadius = borderRadiusPicker.value + 'px';
+
+  if (selectedBlock.tagName === 'A') {
+    selectedBlock.setAttribute('href', linkUrlInput.value);
+    if (linkTargetInput.checked) {
+      selectedBlock.setAttribute('target', '_blank');
+    } else {
+      selectedBlock.removeAttribute('target');
+    }
+  }
 }
 
-function applyTheme(theme) {
-  builder.className = `builder-area theme-${theme}`;
-  preview.className = `preview-area hidden theme-${theme}`;
+function handleImageUpload(event) {
+  const file = event.target.files[0];
+  if (!file || !selectedBlock || selectedBlock.tagName !== 'IMG') return;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    selectedBlock.src = e.target.result;
+    saveState();
+  };
+  reader.readAsDataURL(file);
+}
+
+function setCanvasView(view, btn) {
+  document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  builder.className = `builder-area view-${view} ${getThemeClass()}`;
+  preview.className = `preview-area hidden view-${view} ${getThemeClass()}`;
+}
+
+function applyGlobalTheme(theme) {
+  const themeClasses = ['theme-indigo', 'theme-emerald', 'theme-sunset', 'theme-dark'];
+  themeClasses.forEach(t => {
+    builder.classList.remove(t);
+    preview.classList.remove(t);
+  });
+
+  builder.classList.add(`theme-${theme}`);
+  preview.classList.add(`theme-${theme}`);
+  saveState();
+}
+
+function getThemeClass() {
+  const themeClasses = ['theme-indigo', 'theme-emerald', 'theme-sunset', 'theme-dark'];
+  for (const t of themeClasses) {
+    if (builder.classList.contains(t)) return t;
+  }
+  return 'theme-indigo';
+}
+
+function filterBlocks() {
+  const query = document.getElementById('blockSearch').value.toLowerCase();
+  const items = document.querySelectorAll('.block-item');
+  items.forEach(item => {
+    const text = item.textContent.toLowerCase();
+    item.style.display = text.includes(query) ? 'block' : 'none';
+  });
+}
+
+function loadTemplate(templateName) {
+  if (!confirm('Loading a template will replace canvas blocks. Continue?')) return;
+  saveState();
+  builder.innerHTML = '';
+
+  if (templateName === 'saas') {
+    addBlock('hero');
+    addBlock('features');
+    addBlock('pricing');
+    addBlock('faq');
+    addBlock('footer');
+  } else if (templateName === 'portfolio') {
+    addBlock('heading');
+    addBlock('text');
+    addBlock('image');
+    addBlock('testimonial');
+    addBlock('form');
+    addBlock('footer');
+  } else if (templateName === 'blank') {
+    builder.innerHTML = '<p class="placeholder">Select an element from the sidebar to add it to your canvas.</p>';
+  }
+}
+
+function exportToJson() {
+  const data = {
+    html: builder.innerHTML,
+    css: globalCustomCss,
+    seo: seoData,
+    theme: getThemeClass()
+  };
+  const jsonStr = JSON.stringify(data, null, 2);
+  const blob = new Blob([jsonStr], { type: 'application/json' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'website-project.json';
+  link.click();
+}
+
+function importJsonFile(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (data.html) {
+        saveState();
+        builder.innerHTML = data.html;
+        globalCustomCss = data.css || "";
+        seoData = data.seo || seoData;
+        customCssInput.value = globalCustomCss;
+        if (data.theme) applyGlobalTheme(data.theme.replace('theme-', ''));
+        rebindEvents();
+      }
+    } catch (err) {
+      alert('Invalid project JSON file.');
+    }
+  };
+  reader.readAsText(file);
+}
+
+function downloadHTMLFile() {
+  const currentTheme = getThemeClass();
+
+  const htmlContent = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${seoData.title}</title>
+  <meta name="description" content="${seoData.description}">
+  <meta property="og:title" content="${seoData.title}">
+  <meta property="og:description" content="${seoData.description}">
+  <meta property="og:image" content="${seoData.image}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body.theme-indigo {
+      --primary: #4f46e5;
+      --accent-bg: #e0e7ff;
+      --accent-text: #3730a3;
+      --bg-color: #ffffff;
+      --text-color: #1f2937;
+      --card-bg: #f9fafb;
+      --border-color: #e5e7eb;
+    }
+    body.theme-emerald {
+      --primary: #059669;
+      --accent-bg: #d1fae5;
+      --accent-text: #065f46;
+      --bg-color: #ffffff;
+      --text-color: #064e3b;
+      --card-bg: #f0fdf4;
+      --border-color: #a7f3d0;
+    }
+    body.theme-sunset {
+      --primary: #ea580c;
+      --accent-bg: #ffedd5;
+      --accent-text: #9a3412;
+      --bg-color: #fffaf5;
+      --text-color: #431407;
+      --card-bg: #fff7ed;
+      --border-color: #fed7aa;
+    }
+    body.theme-dark {
+      --primary: #38bdf8;
+      --accent-bg: #1e293b;
+      --accent-text: #38bdf8;
+      --bg-color: #0f172a;
+      --text-color: #f8fafc;
+      --card-bg: #1e293b;
+      --border-color: #334155;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      line-height: 1.6;
+    }
+
+    .badge-pill {
+      display: inline-block;
+      padding: 4px 12px;
+      background: var(--accent-bg);
+      color: var(--accent-text);
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .hero-section { text-align: center; padding: 60px 20px; }
+    .hero-section h1 { font-size: 2.8rem; font-weight: 700; margin-bottom: 16px; }
+    .hero-section p { font-size: 1.2rem; opacity: 0.8; max-width: 600px; margin: 0 auto 24px auto; }
+
+    .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin: 40px 0; }
+    .feature-card { padding: 20px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--card-bg); }
+
+    .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin: 40px 0; }
+    .pricing-card { padding: 30px; border: 1px solid var(--border-color); border-radius: 12px; background: var(--card-bg); text-align: center; }
+    .pricing-card.featured { border: 2px solid var(--primary); }
+    .pricing-card .price { font-size: 2.5rem; font-weight: 700; margin: 16px 0; }
+
+    .testimonial-card { padding: 24px; background: var(--card-bg); border-left: 4px solid var(--primary); border-radius: 6px; margin: 20px 0; }
+    .two-column-grid { display: flex; gap: 20px; margin: 20px 0; }
+    .two-column-grid .col { flex: 1; padding: 15px; border: 1px dashed var(--border-color); border-radius: 6px; }
+
+    .custom-action-btn { padding: 12px 24px; background: var(--primary); color: #ffffff; border: none; border-radius: 6px; cursor: pointer; font-size: 1rem; font-weight: 600; }
+    .sample-form { display: flex; flex-direction: column; gap: 12px; max-width: 450px; margin: 20px 0; }
+    .sample-form input, .sample-form textarea { padding: 12px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-color); border-radius: 6px; font-family: inherit; }
+    .sample-form button { padding: 12px; background: var(--primary); color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; }
+    .site-footer { text-align: center; padding: 30px 0; border-top: 1px solid var(--border-color); margin-top: 40px; opacity: 0.7; }
+    ${globalCustomCss}
+  </style>
+</head>
+<body class="${currentTheme}">
+${getCleanHTML()}
+</body>
+</html>`;
+
+  const blob = new Blob([htmlContent], { type: 'text/html' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'index.html';
+  link.click();
+  URL.revokeObjectURL(link.href);
 }
 
 function getCleanHTML() {
   const clone = builder.cloneNode(true);
   clone.querySelectorAll('.block-controls, .placeholder').forEach(el => el.remove());
-  clone.querySelectorAll('.block').forEach(b => b.classList.remove('block'));
+  clone.querySelectorAll('.block').forEach(block => {
+    block.removeAttribute('draggable');
+    block.removeAttribute('id');
+    block.classList.remove('block', 'dragging');
+  });
   clone.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
   return clone.innerHTML.trim();
 }
+
+function rgbToHex(rgb) {
+  const result = rgb.match(/\d+/g);
+  if (!result) return '#000000';
+  return '#' + result.slice(0, 3).map(x => parseInt(x, 10).toString(16).padStart(2, '0')).join('');
+}
+
+function closeSettingsPanel() { settingsPanel.classList.add('hidden'); }
+function saveCustomCss() { globalCustomCss = customCssInput.value; closeModal('cssModal'); }
+function saveSeoData() {
+  seoData.title = document.getElementById('seoTitle').value || seoData.title;
+  seoData.description = document.getElementById('seoDescription').value || seoData.description;
+  seoData.image = document.getElementById('seoImage').value || seoData.image;
+  closeModal('seoModal');
+}
+function closeModal(modalId) { document.getElementById(modalId).classList.add('hidden'); }
+
+document.getElementById('darkModeToggle').addEventListener('click', () => {
+  document.body.classList.toggle('dark');
+  localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+});
 
 document.getElementById('previewBtn').addEventListener('click', () => {
   if (preview.classList.contains('hidden')) {
@@ -92,14 +643,10 @@ document.getElementById('previewBtn').addEventListener('click', () => {
   }
 });
 
-document.getElementById('saveBtn').addEventListener('click', () => {
-  localStorage.setItem('builderContent', builder.innerHTML);
-  alert('Saved locally!');
-});
-
 document.getElementById('clearBtn').addEventListener('click', () => {
   if (confirm('Clear workspace?')) {
-    builder.innerHTML = '<p class="placeholder">Select an element from the left sidebar to add it to your canvas.</p>';
+    saveState();
+    builder.innerHTML = '<p class="placeholder">Select an element from the sidebar to add it to your canvas.</p>';
   }
 });
 
@@ -108,25 +655,35 @@ document.getElementById('exportBtn').addEventListener('click', () => {
   exportModal.classList.remove('hidden');
 });
 
-document.getElementById('downloadBtn').addEventListener('click', () => {
-  const page = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Exported Page</title><style>body{font-family:system-ui;padding:20px;max-width:1000px;margin:0 auto;}.custom-btn{padding:8px 16px;background:#4f46e5;color:white;border:none;border-radius:6px;}.card-box{padding:16px;border:1px solid #e5e7eb;border-radius:8px;background:#f9fafb;}</style></head><body>${getCleanHTML()}</body></html>`;
-  const blob = new Blob([page], { type: 'text/html' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'index.html';
-  a.click();
+document.getElementById('customCssBtn').addEventListener('click', () => { cssModal.classList.remove('hidden'); });
+document.getElementById('seoModalBtn').addEventListener('click', () => {
+  document.getElementById('seoTitle').value = seoData.title;
+  document.getElementById('seoDescription').value = seoData.description;
+  document.getElementById('seoImage').value = seoData.image;
+  seoModal.classList.remove('hidden');
 });
 
-function closeModal() {
-  exportModal.classList.add('hidden');
-}
+document.getElementById('exportJsonBtn').addEventListener('click', exportToJson);
+document.getElementById('importJsonBtn').addEventListener('click', () => { document.getElementById('jsonFileInput').click(); });
+document.getElementById('downloadBtn').addEventListener('click', downloadHTMLFile);
 
-function rgbToHex(rgb) {
-  const res = rgb.match(/\d+/g);
-  return res ? '#' + res.slice(0, 3).map(x => parseInt(x, 10).toString(16).padStart(2, '0')).join('') : '#000000';
-}
+document.addEventListener('click', e => {
+  if (!settingsPanel.contains(e.target) && !e.target.closest('.block')) {
+    settingsPanel.classList.add('hidden');
+    selectedBlock = null;
+  }
+});
+
+document.getElementById('undoBtn').addEventListener('click', undo);
+document.getElementById('redoBtn').addEventListener('click', redo);
 
 window.addEventListener('DOMContentLoaded', () => {
+  if (localStorage.getItem('theme') === 'dark') {
+    document.body.classList.add('dark');
+  }
   const saved = localStorage.getItem('builderContent');
-  if (saved) builder.innerHTML = saved;
+  if (saved) {
+    builder.innerHTML = saved;
+    rebindEvents();
+  }
 });
