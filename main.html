@@ -14,39 +14,47 @@
   <div class="app">
     <header class="toolbar">
       <div class="logo">Builder</div>
+      
+      <div class="view-modes">
+        <button onclick="setCanvasView('desktop')" class="view-btn active">Desktop</button>
+        <button onclick="setCanvasView('tablet')" class="view-btn">Tablet</button>
+        <button onclick="setCanvasView('mobile')" class="view-btn">Mobile</button>
+      </div>
+
       <div class="toolbar-actions">
-        <button id="darkModeToggle" title="Toggle Dark Mode">🌙</button>
-        <button id="previewBtn" title="Preview">👁</button>
-        <button id="saveBtn" title="Save">💾</button>
-        <button id="exportBtn" title="Export">📤</button>
-        <button id="undoBtn" title="Undo">↩️</button>
-        <button id="redoBtn" title="Redo">↪️</button>
-        <button id="clearBtn" title="Clear">🧹</button>
+        <button id="darkModeToggle" title="Toggle Dark Mode">Theme</button>
+        <button id="previewBtn" title="Preview">Preview</button>
+        <button id="saveBtn" title="Save">Save</button>
+        <button id="downloadBtn" title="Download HTML">Download</button>
+        <button id="exportBtn" title="View Code">Code</button>
+        <button id="undoBtn" title="Undo">Undo</button>
+        <button id="redoBtn" title="Redo">Redo</button>
+        <button id="clearBtn" title="Clear">Clear</button>
       </div>
     </header>
 
     <div class="layout">
       <aside class="sidebar">
         <h3>Blocks</h3>
-        <button onclick="addBlock('text')"><span class="icon">📝</span><span class="label">Text</span></button>
-        <button onclick="addBlock('image')"><span class="icon">🖼</span><span class="label">Image</span></button>
-        <button onclick="addBlock('button')"><span class="icon">🔘</span><span class="label">Button</span></button>
-        <button onclick="addBlock('heading')"><span class="icon">🔤</span><span class="label">Heading</span></button>
-        <button onclick="addBlock('link')"><span class="icon">🔗</span><span class="label">Link</span></button>
-        <button onclick="addBlock('divider')"><span class="icon">➖</span><span class="label">Divider</span></button>
-        <button onclick="addBlock('input')"><span class="icon">🔲</span><span class="label">Input</span></button>
-        <button onclick="addBlock('card')"><span class="icon">📇</span><span class="label">Card</span></button>
-        <button onclick="addBlock('form')"><span class="icon">📝</span><span class="label">Form</span></button>
+        <button onclick="addBlock('text')"><span class="label">Text</span></button>
+        <button onclick="addBlock('image')"><span class="label">Image</span></button>
+        <button onclick="addBlock('button')"><span class="label">Button</span></button>
+        <button onclick="addBlock('heading')"><span class="label">Heading</span></button>
+        <button onclick="addBlock('link')"><span class="label">Link</span></button>
+        <button onclick="addBlock('divider')"><span class="label">Divider</span></button>
+        <button onclick="addBlock('input')"><span class="label">Input</span></button>
+        <button onclick="addBlock('card')"><span class="label">Card</span></button>
+        <button onclick="addBlock('form')"><span class="label">Form</span></button>
       </aside>
 
-      <button class="toggle-btn" onclick="toggleLayout()" title="Expand or Collapse Workspace">&#8654;</button>
+      <button class="toggle-btn" onclick="toggleLayout()" title="Expand or Collapse Workspace">&gt;</button>
 
       <main class="builder-container">
-        <section id="builder" class="builder-area">
+        <section id="builder" class="builder-area view-desktop">
           <p class="placeholder">Start building your app here...</p>
         </section>
 
-        <section id="preview" class="preview-area hidden"></section>
+        <section id="preview" class="preview-area hidden view-desktop"></section>
       </main>
     </div>
   </div>
@@ -58,6 +66,18 @@
     <label>Font Size (px):
       <input type="number" id="fontSizePicker" value="16" onchange="applySettings()" />
     </label>
+    <label>Alignment:
+      <select id="alignmentPicker" onchange="applySettings()">
+        <option value="left">Left</option>
+        <option value="center">Center</option>
+        <option value="right">Right</option>
+      </select>
+    </label>
+    <div id="imageUploadGroup" class="hidden">
+      <label>Replace Image:
+        <input type="file" id="imageFileInput" accept="image/*" onchange="handleImageUpload(event)" />
+      </label>
+    </div>
   </div>
 
   <div id="exportModal" class="modal hidden">
