@@ -5,6 +5,8 @@ const exportCode = document.getElementById('exportCode');
 const settingsPanel = document.getElementById('settingsPanel');
 const textColorPicker = document.getElementById('textColorPicker');
 const fontSizePicker = document.getElementById('fontSizePicker');
+const alignmentPicker = document.getElementById('alignmentPicker');
+const imageUploadGroup = document.getElementById('imageUploadGroup');
 
 let selectedBlock = null;
 let undoStack = [];
@@ -86,7 +88,7 @@ function addBlock(type) {
     case 'image':
       content = document.createElement('img');
       content.src = 'https://via.placeholder.com/600x300';
-      content.alt = 'Placeholder image';
+      content.alt = 'Uploaded image';
       content.style.width = '100%';
       break;
     case 'button':
@@ -158,15 +160,69 @@ builder.addEventListener('click', e => {
   if (!selectedBlock) return;
 
   settingsPanel.classList.remove('hidden');
+  
+  if (selectedBlock.tagName === 'IMG') {
+    imageUploadGroup.classList.remove('hidden');
+  } else {
+    imageUploadGroup.classList.add('hidden');
+  }
+
   const computed = window.getComputedStyle(selectedBlock);
   textColorPicker.value = rgbToHex(computed.color || '#000000');
   fontSizePicker.value = parseInt(computed.fontSize, 10) || 16;
+  alignmentPicker.value = computed.textAlign || 'left';
 });
 
 function applySettings() {
   if (!selectedBlock) return;
   selectedBlock.style.color = textColorPicker.value;
   selectedBlock.style.fontSize = fontSizePicker.value + 'px';
+  selectedBlock.style.textAlign = alignmentPicker.value;
+}
+
+function handleImageUpload(event) {
+  const file = event.target.files[0];
+  if (!file || !selectedBlock || selectedBlock.tagName !== 'IMG') return;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    selectedBlock.src = e.target.result;
+    saveState();
+  };
+  reader.readAsDataURL(file);
+}
+
+function setCanvasView(view) {
+  document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
+  event.target.classList.add('active');
+
+  builder.className = `builder-area view-${view}`;
+  preview.className = `preview-area hidden view-${view}`;
+}
+
+function downloadHTMLFile() {
+  const htmlContent = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exported Page</title>
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 20px; max-width: 1200px; margin: 0 auto; }
+    .card { border: 1px solid #e5e7eb; padding: 16px; border-radius: 8px; background-color: #f9fafb; }
+  </style>
+</head>
+<body>
+${getCleanHTML()}
+</body>
+</html>`;
+
+  const blob = new Blob([htmlContent], { type: 'text/html' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'index.html';
+  link.click();
+  URL.revokeObjectURL(link.href);
 }
 
 function rgbToHex(rgb) {
@@ -212,6 +268,8 @@ document.getElementById('exportBtn').addEventListener('click', () => {
   exportModal.classList.remove('hidden');
 });
 
+document.getElementById('downloadBtn').addEventListener('click', downloadHTMLFile);
+
 function closeModal() {
   exportModal.classList.add('hidden');
 }
@@ -248,11 +306,3 @@ window.addEventListener('DOMContentLoaded', () => {
     rebindEvents();
   }
 });
-
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('service.worker.js')
-      .then(reg => console.log('Service Worker registered:', reg.scope))
-      .catch(err => console.error('Service Worker failed:', err));
-  });
-}
