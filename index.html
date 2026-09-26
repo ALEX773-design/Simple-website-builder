@@ -3,168 +3,37 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Simple Web App Builder | No-Code Web Design</title>
-  <meta name="description" content="Build, customize, and export responsive web apps directly in your browser with zero coding required.">
-  <link rel="manifest" href="manifest.json" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <title>Simple Web App Builder</title>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: 'Inter', sans-serif;
+      font-family: system-ui, -apple-system, sans-serif;
       background-color: #0f172a;
       color: #f8fafc;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-    }
-
-    header {
-      padding: 20px 40px;
-      display: flex;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
-      border-bottom: 1px solid #1e293b;
-    }
-
-    .logo {
-      font-weight: 700;
-      font-size: 1.2rem;
-      color: #38bdf8;
-    }
-
-    .hero {
-      max-width: 900px;
-      margin: 60px auto 40px auto;
       text-align: center;
-      padding: 0 20px;
+      padding: 20px;
     }
-
-    .badge {
-      display: inline-block;
-      padding: 6px 16px;
-      background: #1e293b;
-      color: #38bdf8;
-      border-radius: 999px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      margin-bottom: 24px;
-      border: 1px solid #334155;
-    }
-
-    h1 {
-      font-size: 3.2rem;
-      font-weight: 800;
-      line-height: 1.2;
-      margin-bottom: 20px;
-      background: linear-gradient(135deg, #ffffff 0%, #94a3b8 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    p {
-      font-size: 1.15rem;
-      color: #94a3b8;
-      max-width: 600px;
-      margin: 0 auto 36px auto;
-      line-height: 1.6;
-    }
-
-    .cta-btn {
-      display: inline-block;
-      padding: 14px 32px;
-      font-size: 1.05rem;
-      font-weight: 600;
-      color: #ffffff;
+    h1 { font-size: 2.5rem; margin-bottom: 16px; }
+    p { font-size: 1.1rem; color: #94a3b8; max-width: 500px; margin-bottom: 28px; }
+    a {
+      padding: 12px 24px;
       background: #4f46e5;
-      border: none;
-      border-radius: 8px;
+      color: #ffffff;
       text-decoration: none;
-      transition: all 0.2s ease;
-      box-shadow: 0 10px 25px rgba(79, 70, 229, 0.3);
-    }
-
-    .cta-btn:hover {
-      background: #4338ca;
-      transform: translateY(-2px);
-    }
-
-    .features {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 24px;
-      max-width: 1000px;
-      margin: 0 auto 60px auto;
-      padding: 0 20px;
-    }
-
-    .feature-card {
-      background: #1e293b;
-      border: 1px solid #334155;
-      padding: 24px;
-      border-radius: 12px;
-      text-align: left;
-    }
-
-    .feature-card h3 {
-      font-size: 1.1rem;
+      border-radius: 6px;
       font-weight: 600;
-      margin-bottom: 8px;
-      color: #f8fafc;
     }
-
-    .feature-card p {
-      font-size: 0.95rem;
-      color: #94a3b8;
-      margin: 0;
-    }
-
-    footer {
-      text-align: center;
-      padding: 24px;
-      border-top: 1px solid #1e293b;
-      color: #64748b;
-      font-size: 0.9rem;
-    }
+    a:hover { background: #4338ca; }
   </style>
 </head>
 <body>
-  <header>
-    <div class="logo">Builder Ultra</div>
-    <a href="main.html" class="cta-btn" style="padding: 8px 16px; font-size: 0.9rem;">Launch App</a>
-  </header>
-
-  <main class="hero">
-    <div class="badge">100% Client-Side & Free</div>
-    <h1>Build Web Apps Directly in Your Browser</h1>
-    <p>Design, customize, and export clean HTML & CSS pages instantly with zero coding or complex server setups required.</p>
-    <a href="main.html" class="cta-btn">Start Building Now →</a>
-  </main>
-
-  <section class="features">
-    <div class="feature-card">
-      <h3>⚡ Component Library</h3>
-      <p>Add text, hero sections, pricing cards, accordions, and forms using drag and drop controls.</p>
-    </div>
-    <div class="feature-card">
-      <h3>🎨 Global Themes</h3>
-      <p>Switch color palettes, fonts, and responsive canvas sizes with a single click.</p>
-    </div>
-    <div class="feature-card">
-      <h3>📤 Production Exports</h3>
-      <p>Download self-contained HTML files ready to publish to GitHub Pages or any web host.</p>
-    </div>
-  </section>
-
-  <footer>
-    &copy; Web App Builder. Open source static web application.
-  </footer>
+  <h1>Web App Builder</h1>
+  <p>Create, customize, and export responsive layouts directly in your browser.</p>
+  <a href="main.html">Launch App Builder</a>
 </body>
 </html>
