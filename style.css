@@ -25,7 +25,7 @@ body, html {
   background-color: #ffffff;
   padding: 10px 20px;
   border-bottom: 1px solid #ddd;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  gap: 15px;
 }
 
 .toolbar .logo {
@@ -33,17 +33,40 @@ body, html {
   font-size: 1.2rem;
 }
 
-.toolbar-actions button {
-  background: none;
+.view-modes {
+  display: flex;
+  gap: 5px;
+  background-color: #e4e4e7;
+  padding: 4px;
+  border-radius: 6px;
+}
+
+.view-btn {
+  padding: 4px 10px;
   border: none;
-  font-size: 1.2rem;
-  margin-left: 12px;
+  background: transparent;
   cursor: pointer;
-  transition: transform 0.2s ease;
+  border-radius: 4px;
+  font-size: 0.85rem;
+}
+
+.view-btn.active {
+  background: #ffffff;
+  font-weight: 600;
+}
+
+.toolbar-actions button {
+  background: #e4e4e7;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  margin-left: 4px;
+  cursor: pointer;
 }
 
 .toolbar-actions button:hover {
-  transform: scale(1.1);
+  background-color: #d4d4d8;
 }
 
 .layout {
@@ -77,14 +100,6 @@ body, html {
   border-radius: 6px;
   background-color: #e4e4e7;
   cursor: pointer;
-  transition: background 0.2s ease;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.sidebar button:hover {
-  background-color: #d4d4d8;
 }
 
 body.collapsed .sidebar {
@@ -95,10 +110,6 @@ body.collapsed .sidebar {
 body.collapsed .sidebar .label,
 body.collapsed .sidebar h3 {
   display: none;
-}
-
-body.collapsed .sidebar button {
-  justify-content: center;
 }
 
 .toggle-btn {
@@ -124,31 +135,41 @@ body.collapsed .toggle-btn {
   flex: 1;
   display: flex;
   flex-direction: column;
+  align-items: center;
   padding: 20px;
   overflow-y: auto;
 }
 
 .builder-area {
-  flex: 1;
+  width: 100%;
   border: 2px dashed #ccc;
   border-radius: 8px;
   padding: 20px;
   background-color: #fff;
   overflow-y: auto;
   min-height: 400px;
-}
-
-.builder-area .placeholder {
-  color: #aaa;
-  font-style: italic;
+  transition: max-width 0.3s ease;
 }
 
 .preview-area {
-  flex: 1;
+  width: 100%;
   padding: 20px;
   background-color: #fff;
   border: 2px solid #4ade80;
   border-radius: 8px;
+  transition: max-width 0.3s ease;
+}
+
+.view-desktop {
+  max-width: 100%;
+}
+
+.view-tablet {
+  max-width: 768px;
+}
+
+.view-mobile {
+  max-width: 375px;
 }
 
 .hidden {
@@ -182,9 +203,6 @@ body.collapsed .toggle-btn {
   font-size: 12px;
   width: 22px;
   height: 22px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .settings-panel {
@@ -206,7 +224,8 @@ body.collapsed .toggle-btn {
   font-size: 14px;
 }
 
-.settings-panel input {
+.settings-panel input,
+.settings-panel select {
   width: 100%;
   padding: 6px;
   margin-top: 4px;
@@ -267,7 +286,8 @@ body.dark .sidebar {
   border-right: 1px solid #3f3f46;
 }
 
-body.dark .sidebar button {
+body.dark .sidebar button,
+body.dark .toolbar-actions button {
   background-color: #3f3f46;
   color: #f4f4f5;
 }
