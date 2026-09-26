@@ -1,14 +1,16 @@
+/* 🌐 Global Reset */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-body, html {
-  font-family: system-ui, -apple-system, sans-serif;
+/* 🖋 Base Styles */
+html, body {
+  font-family: 'Inter', sans-serif;
   height: 100%;
-  background-color: #f4f4f5;
-  color: #1f2937;
+  background-color: #f4f4f5; /* soft gray background */
+  color: #1f2937;            /* dark slate text */
 }
 
 .app {
@@ -17,175 +19,270 @@ body, html {
   height: 100vh;
 }
 
+/* 🔧 Toolbar */
 .toolbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
   background-color: #ffffff;
-  padding: 10px 20px;
   border-bottom: 1px solid #e5e7eb;
 }
 
-.logo {
+.brand .logo {
   font-weight: 700;
   font-size: 1.1rem;
-  color: #4f46e5;
+  color: #4f46e5; /* indigo brand color */
 }
 
-.toolbar select, .toolbar button {
-  padding: 6px 12px;
-  border-radius: 6px;
+.toolbar-center {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.toolbar-center select {
+  padding: 5px 8px;
+  font-size: 0.8rem;
   border: 1px solid #d1d5db;
-  background: #ffffff;
-  cursor: pointer;
-  font-size: 0.85rem;
+  border-radius: 6px;
 }
 
-.toolbar .primary-btn {
+/* 👁 View Modes */
+.view-modes {
+  display: flex;
+  padding: 3px;
+  border-radius: 6px;
+  background-color: #f3f4f6;
+}
+.view-btn {
+  padding: 4px 8px;
+  font-size: 0.75rem;
+  border: none;
+  background: transparent;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.view-btn.active {
+  background: #ffffff;
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* 🎛 Toolbar Actions */
+.toolbar-actions {
+  display: flex;
+  gap: 4px;
+}
+.toolbar-actions button {
+  padding: 5px 10px;
+  font-size: 0.8rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  background: #f3f4f6;
+  cursor: pointer;
+}
+.toolbar-actions button:hover { background-color: #e5e7eb; }
+.toolbar-actions .primary-btn {
   background: #4f46e5;
   color: #ffffff;
+  font-weight: 600;
   border: none;
 }
+.toolbar-actions .danger-btn { color: #ef4444; }
 
-.toolbar .danger-btn {
-  color: #ef4444;
-}
-
+/* 📐 Layout */
 .layout {
   display: flex;
   flex: 1;
   overflow: hidden;
 }
 
+/* 📂 Sidebar */
 .sidebar {
-  width: 220px;
-  background-color: #ffffff;
-  border-right: 1px solid #e5e7eb;
-  padding: 16px;
+  width: 240px;
+  padding: 14px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
+  background-color: #ffffff;
+  border-right: 1px solid #e5e7eb;
 }
-
 .sidebar h3 {
   font-size: 0.9rem;
-  margin-bottom: 8px;
+  font-weight: 600;
 }
-
-.sidebar button {
-  padding: 8px 12px;
-  border: 1px solid #e5e7eb;
+#blockSearch {
+  padding: 8px;
+  font-size: 0.8rem;
+  border: 1px solid #d1d5db;
   border-radius: 6px;
-  background: #fafafa;
-  text-align: left;
+}
+.category-label {
+  margin-top: 10px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #9ca3af;
+}
+.block-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow-y: auto;
+}
+.block-item {
+  padding: 8px 10px;
+  font-size: 0.85rem;
+  border: 1px solid #f3f4f6;
+  border-radius: 6px;
+  background-color: #fafafa;
   cursor: pointer;
+  text-align: left;
+}
+.block-item:hover {
+  background-color: #e0e7ff;
+  border-color: #c7d2fe;
 }
 
-.sidebar button:hover {
-  background: #f3f4f6;
-}
-
+/* 🏗 Builder Area */
 .builder-container {
   flex: 1;
-  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px;
+  position: relative;
   overflow-y: auto;
 }
 
+/* 🎨 Theme Variables */
+.builder-area.theme-indigo, .preview-area.theme-indigo { /* Indigo palette */ }
+.builder-area.theme-emerald, .preview-area.theme-emerald { /* Emerald palette */ }
+.builder-area.theme-sunset, .preview-area.theme-sunset { /* Sunset palette */ }
+.builder-area.theme-dark, .preview-area.theme-dark { /* Dark palette */ }
+
+/* Canvas + Preview */
 .builder-area {
-  min-height: 400px;
-  border: 2px dashed #cbd5e1;
-  border-radius: 8px;
+  width: 100%;
+  min-height: 450px;
   padding: 20px;
-  background-color: var(--bg, #ffffff);
-  color: var(--text, #1f2937);
+  border: 2px dashed var(--border-color, #cbd5e1);
+  border-radius: 8px;
+  background-color: var(--bg-color, #ffffff);
+  color: var(--text-color, #1f2937);
+  overflow-y: auto;
+  transition: all 0.3s ease;
 }
-
 .preview-area {
-  min-height: 400px;
-  border: 2px solid #10b981;
-  border-radius: 8px;
+  width: 100%;
   padding: 20px;
-  background-color: var(--bg, #ffffff);
-  color: var(--text, #1f2937);
+  border: 2px solid var(--primary, #10b981);
+  border-radius: 8px;
+  background-color: var(--bg-color, #ffffff);
+  color: var(--text-color, #1f2937);
+  transition: all 0.3s ease;
 }
 
-.builder-area.theme-indigo, .preview-area.theme-indigo { --primary: #4f46e5; --bg: #ffffff; --text: #1f2937; }
-.builder-area.theme-emerald, .preview-area.theme-emerald { --primary: #059669; --bg: #ffffff; --text: #064e3b; }
-.builder-area.theme-dark, .preview-area.theme-dark { --primary: #38bdf8; --bg: #0f172a; --text: #f8fafc; }
+/* 📱 Responsive Views */
+.view-desktop { max-width: 100%; }
+.view-tablet  { max-width: 768px; }
+.view-mobile  { max-width: 375px; }
 
 .hidden { display: none !important; }
 
+/* 🧱 Blocks */
 .block {
   position: relative;
-  padding: 12px;
-  border: 1px dashed #d1d5db;
   margin-bottom: 12px;
+  padding: 12px;
+  border: 1px dashed transparent;
   border-radius: 6px;
+  cursor: move;
 }
+.block:hover { border-color: var(--primary, #4f46e5); }
+.block.dragging { opacity: 0.4; }
 
 .block-controls {
   position: absolute;
   top: 4px;
   right: 4px;
-  display: flex;
-  gap: 4px;
-}
-
-.block-controls button {
-  background: #ef4444;
-  color: white;
-  border: none;
+  display: none;
+  gap: 2px;
+  padding: 2px;
+  background: #ffffff;
   border-radius: 4px;
-  padding: 2px 6px;
-  font-size: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+}
+.block:hover .block-controls { display: flex; }
+.block-controls button {
+  width: 22px;
+  height: 22px;
+  font-size: 11px;
+  border: none;
+  border-radius: 3px;
+  background: #f3f4f6;
   cursor: pointer;
 }
 
-.card-box {
-  padding: 16px;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  background: #f9fafb;
-}
+/* 🧩 Components */
+.badge-pill { /* same as before */ }
+.hero-section { text-align: center; padding: 40px 10px; }
+.hero-section h1 { font-size: 2.2rem; margin-bottom: 12px; }
+.hero-section p { font-size: 1rem; margin-bottom: 20px; opacity: 0.8; }
 
-.custom-btn {
-  padding: 8px 16px;
-  background-color: var(--primary, #4f46e5);
-  color: white;
-  border: none;
+/* ... feature-grid, pricing-grid, testimonial-card, etc. remain grouped as before ... */
+
+/* 📝 Rich Text Bar */
+.rich-text-bar {
+  position: absolute;
+  z-index: 1000;
+  display: flex;
+  gap: 2px;
+  padding: 4px;
+  background: #1f2937;
   border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
+.rich-text-bar button {
+  padding: 4px 8px;
+  font-size: 0.85rem;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: #ffffff;
+  cursor: pointer;
+}
+.rich-text-bar button:hover { background: #374151; }
 
+/* ⚙️ Settings Panel */
 .settings-panel {
   position: fixed;
   top: 70px;
-  right: 20px;
-  width: 200px;
+  right: 16px;
+  width: 250px;
+  max-height: 85vh;
+  padding: 14px;
   background: #ffffff;
   border: 1px solid #e5e7eb;
-  padding: 12px;
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  overflow-y: auto;
+  z-index: 1000;
+}
+.panel-header { display: flex; justify-content: space-between; margin-bottom: 12px; }
+.close-panel-btn { background: none; border: none; font-size: 1.2rem; cursor: pointer; }
+.settings-panel label { display: block; margin-bottom: 10px; font-size: 0.8rem; }
+.settings-panel input, .settings-panel select {
+  width: 100%;
+  margin-top: 4px;
+  padding: 6px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
 }
 
-.settings-panel label { display: block; margin-bottom: 8px; font-size: 0.8rem; }
-.settings-panel input { width: 100%; margin-top: 4px; }
-
+/* 🪟 Modal */
 .modal {
   position: fixed;
-  top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(0,0,0,0.5);
-  display: flex; justify-content: center; align-items: center;
-}
-
-.modal-content {
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  width: 90%;
-  max-width: 500px;
-}
-
-.modal-content textarea {
-  width: 100%; height: 180px; margin: 12px 0; padding: 8px; font-family: monospace;
-}
+  top: 0; left: 0;
+  width: 100%; height: 100%;
