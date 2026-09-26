@@ -1,4 +1,3 @@
-/* Base Styles */
 * {
   margin: 0;
   padding: 0;
@@ -19,7 +18,6 @@ body, html {
   height: 100vh;
 }
 
-/* Toolbar */
 .toolbar {
   display: flex;
   justify-content: space-between;
@@ -48,14 +46,13 @@ body, html {
   transform: scale(1.1);
 }
 
-/* Layout */
 .layout {
   display: flex;
   flex: 1;
   overflow: hidden;
+  position: relative;
 }
 
-/* Sidebar */
 .sidebar {
   width: 200px;
   background-color: #fafafa;
@@ -83,52 +80,52 @@ body, html {
   transition: background 0.2s ease;
   display: flex;
   align-items: center;
+  gap: 8px;
 }
 
 .sidebar button:hover {
   background-color: #d4d4d8;
 }
 
-.sidebar .icon {
-  display: inline-block;
-  margin-right: 8px;
-  font-size: 1.1rem;
-}
-
-.sidebar .label {
-  display: inline-block;
-}
-
-/* Collapsed Sidebar */
 body.collapsed .sidebar {
   width: 60px;
-  align-items: center;
+  padding: 15px 8px;
 }
 
-body.collapsed .sidebar .icon {
-  margin: 0 auto;
-  display: block;
-  text-align: center;
-}
-
-body.collapsed .sidebar .label {
+body.collapsed .sidebar .label,
+body.collapsed .sidebar h3 {
   display: none;
 }
 
 body.collapsed .sidebar button {
-  text-align: center;
-  padding: 10px 0;
   justify-content: center;
 }
 
-/* Main Builder Area */
+.toggle-btn {
+  position: absolute;
+  top: 15px;
+  left: 185px;
+  z-index: 10;
+  background: #333;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  transition: left 0.3s ease;
+}
+
+body.collapsed .toggle-btn {
+  left: 45px;
+}
+
 .builder-container {
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 10px;
+  padding: 20px;
   overflow-y: auto;
-  transition: margin-left 0.3s ease;
 }
 
 .builder-area {
@@ -138,6 +135,7 @@ body.collapsed .sidebar button {
   padding: 20px;
   background-color: #fff;
   overflow-y: auto;
+  min-height: 400px;
 }
 
 .builder-area .placeholder {
@@ -145,7 +143,6 @@ body.collapsed .sidebar button {
   font-style: italic;
 }
 
-/* Preview Area */
 .preview-area {
   flex: 1;
   padding: 20px;
@@ -158,14 +155,72 @@ body.collapsed .sidebar button {
   display: none !important;
 }
 
-/* Modal */
+.block {
+  position: relative;
+  padding: 12px;
+  border: 1px dashed #bbb;
+  margin-bottom: 12px;
+  background: #fff;
+  border-radius: 8px;
+  cursor: move;
+}
+
+.block.dragging {
+  opacity: 0.4;
+  border-color: #4f46e5;
+}
+
+.delete-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 12px;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.settings-panel {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  width: 220px;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  padding: 15px;
+  z-index: 1000;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.settings-panel label {
+  display: block;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+.settings-panel input {
+  width: 100%;
+  padding: 6px;
+  margin-top: 4px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
 .modal {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0,0,0,0.4);
+  background-color: rgba(0,0,0,0.5);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -178,21 +233,25 @@ body.collapsed .sidebar button {
   width: 90%;
   max-width: 600px;
   border-radius: 10px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
 .modal-content textarea {
   width: 100%;
-  height: 300px;
+  height: 250px;
+  margin: 15px 0;
   padding: 10px;
-  margin-top: 10px;
   font-family: monospace;
   border: 1px solid #ccc;
   border-radius: 6px;
-  resize: none;
 }
 
-/* Dark Mode */
+.card {
+  border: 1px solid #e5e7eb;
+  padding: 16px;
+  border-radius: 8px;
+  background-color: #f9fafb;
+}
+
 body.dark {
   background-color: #18181b;
   color: #f4f4f5;
@@ -208,195 +267,22 @@ body.dark .sidebar {
   border-right: 1px solid #3f3f46;
 }
 
-body.dark .builder-area,
-body.dark .preview-area {
-  background-color: #27272a;
-  border-color: #52525b;
-}
-
 body.dark .sidebar button {
   background-color: #3f3f46;
   color: #f4f4f5;
 }
 
-body.dark .sidebar button:hover {
-  background-color: #52525b;
-}
-
-body.dark .modal-content {
-  background-color: #1f1f23;
+body.dark .builder-area,
+body.dark .preview-area,
+body.dark .modal-content,
+body.dark .settings-panel {
+  background-color: #27272a;
   color: #f4f4f5;
-  border: 1px solid #3f3f46;
+  border-color: #3f3f46;
 }
 
 body.dark textarea {
-  background-color: #27272a;
+  background-color: #18181b;
   color: #f4f4f5;
-  border: 1px solid #52525b;
-}
-
-/* Corner Toggle */
-.corner-toggle-btn {
-  position: absolute;
-  top: 70px;
-  left: 260px;
-  z-index: 1000;
-  background-color: #333;
-  color: #fff;
-  border: none;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  font-size: 1.4rem;
-  cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
-  transition: left 0.3s ease;
-  transition: right 0.3s ease;
-}
-
-body.collapsed .corner-toggle-btn {
-  left: 60px;
-}
-
-/* Block */
-.block {
-  position: relative;
-  padding: 10px;
-  border: 1px dashed #ccc;
-  margin-bottom: 10px;
-  background: #fff;
-  border-radius: 8px;
-}
-
-.block.dragging {
-  opacity: 0.5;
-  border: 2px dashed #aaa;
-}
-
-.delete-btn {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  background: red;
-  color: black;
-  border: none;
-  border-radius: 50%;
-  cursor: pointer;
-  font-size: 10px;
-  width: 20px;
-  height: 20px;
-}
-
-/* Settings Panel */
-.settings-panel {
-  position: fixed;
-  top: 70px;
-  right: 10px;
-  width: 200px;
-  background: #f1f1f1;
-  border: 1px solid #ccc;
-  padding: 15px;
-  border-radius: 10px;
-  z-index: 1000;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
-
-.settings-panel.hidden {
-  display: none;
-}
-
-.settings-panel label {
-  display: block;
-  margin-bottom: 10px;
-  font-size: 14px;
-}
-.settings-panel {
-  position: fixed;
-  top: 100px;
-  right: 20px;
-  width: 220px;
-  background: #f9fafb;
-  border: 1px solid #d1d5db;
-  border-radius: 10px;
-  padding: 15px;
-  z-index: 1000;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-  transition: all 0.3s ease;
-  font-size: 14px;
-}
-
-.settings-panel label {
-  display: block;
-  margin-bottom: 12px;
-  color: #333;
-}
-
-.settings-panel input[type="color"],
-.settings-panel input[type="number"],
-.settings-panel input[type="text"] {
-  width: 100%;
-  padding: 5px 8px;
-  margin-top: 4px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 14px;
-}
-
-.settings-panel button {
-  margin-top: 10px;
-  width: 100%;
-  padding: 8px;
-  border: none;
-  border-radius: 6px;
-  background-color: #4f46e5;
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
-
-.settings-panel button:hover {
-  background-color: #4338ca;
-}
-
-body.dark .settings-panel {
-  background: #1f1f23;
-  color: #f4f4f5;
-  border: 1px solid #3f3f46;
-}
-
-body.dark .settings-panel input,
-body.dark .settings-panel button {
-  background-color: #27272a;
-  color: #f4f4f5;
-  border: 1px solid #52525b;
-}
-.hidden {
-  display: none !important;
-}
-.card {
-  border: 1px solid #ccc;
-  padding: 16px;
-  margin: 8px 0;
-  border-radius: 8px;
-  background-color: #f9f9f9;
-}
-
-.card h3 {
-  font-size: 18px;
-  font-weight: bold;
-}
-
-.card p {
-  font-size: 14px;
-  color: #555;
-}
-
-input[type="text"] {
-  padding: 8px;
-  font-size: 16px;
-  width: 100%;
-  margin: 8px 0;
-  border-radius: 4px;
-  border: 1px solid #ccc;
+  border-color: #3f3f46;
 }
